@@ -6,89 +6,16 @@ class PoopStart {
 
             private string $end = '';
             private array $event;
-            private array $pooparr;
             private PoopLogic $logic;
 
         public function __construct(){
 
-            $this->sendHeaders($this->headerWave1());
-
-            if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST'){
-                $this->sendHeaders($this->headerWave2());
-                $this->logic = new PoopLogic();
-                $this->runPoopSim();
-                echo \json_encode($this->pooparr);
-            }else{
-                $this->sendHeaders($this->headerWave3());
-                echo 'oops that\'s a teapot';
-            }
+            $this->logic = new PoopLogic();
+            $this->runPoopSim();
 
         }
 
-    private function sendHeaders(array $headers){
-
-        foreach($headers as &$header){
-            \header($header);
-        }
-
-        unset($header);
-
-    }
-
-    private function headerWave1(){
-
-        return [
-            'Allow: POST, HEAD',
-            'Cross-Origin-Resource-Policy: same-origin',
-            'Content-Type: application/json',
-        ];
-
-    }
-
-    private function headerWave2(){
-
-        return [
-            'HTTP/1.1 200 OK',
-            'Expires: Mon, 26 Jul 1997 05:00:00 GMT',
-            'Cache-Control: no-cache',
-            'Pragma: no-cache',
-            'X-Toilet-Status: destroyed',
-            'X-Pants-Status: not pooped',
-        ];
-
-    }
-
-    private function headerWave3(){
-
-        return [    
-            "HTTP/1.1 418 I'm a teapot",
-            'X-Pants-Status: pooped',
-            'X-Toilet-Status: this is a teapot',
-            'Content-Type: text/plain;charset=UTF-8',
-        ];
-
-    }
-
-    private function preparePoopArr(){
-
-        $pooparr[] = '<div class="poop-start"><p>Pooping...</p></div>'."\n";
-
-        for($i = 0; $i < $this->logic->poops; $i++){
-            if($i < 25 || ($i % 25) === 0){
-                $pooparr[] = ($i !== 0 && $i !== 90000 && (($i % 10000) === 0)) ? $this->prepString($this->event[$i]) : '<li>poop</li>'."\n";
-            }
-        }
-
-        $pooparr[] = $this->end;
-        $pooparr = \array_filter(
-            \array_values($pooparr)
-        );
-
-        $this->pooparr = $pooparr;
-
-    }
-
-    private function runPoopSim(){
+    private function runPoopSim(): void {
 
         $this->logic->milestones === [] && $this->setPatheticEnd();
 
@@ -103,21 +30,22 @@ class PoopStart {
             unset($milestone);
         }
         
-        $this->end = ($this->end === '') ? $this->setEndString('<br>... See a doctor!') : $this->end;
+        ($this->end === '') && $this->end = $this->setEndString('<br>... See a doctor!');
         $this->preparePoopArr();
 
     }
 
-    private function milestone0(){
+    private function milestone0(): string {
 
-        switch(true){
-            case $this->logic->screamed:
-                return 'Screaming.....';
-            case $this->logic->sweaty:
-                return 'Sweating.....';
-            default:
-                return '';
-        }
+        $words = match(true){
+
+            $this->logic->screamed => 'Screaming.....',
+            $this->logic->sweaty => 'Sweating.....',
+            default => '',
+
+        };
+
+        return $words;
         
     }
 
@@ -141,67 +69,68 @@ class PoopStart {
 
     private function milestone4(): string {
 
-        switch(true){
-            case !$this->logic->clogged:
-                return 'Flushing a third time...';
-            case !$this->logic->flooding:
-                return $this->logic->sweaty ? 'Plunger slipped and broke.....' : 'Flushing <em>again....</em>';
-            default:
-                $this->end = $this->setEndString('<br>... And lost your security deposit.');
-                return 'Flooding.......';
-        }
+        $words = match(true){
+
+            !$this->logic->clogged => 'Flushing a third time...',
+            !$this->logic->flooding => $this->logic->sweaty ? 'Plunger slipped and broke.....' : 'Flushing <em>again....</em>',
+            $this->logic->flooding => 'Flooding.......' && $this->end = $this->setEndString('<br>... And lost your security deposit.'),
+
+        };
+
+        return $words;
 
     }
 
     private function milestone5(): string {
 
-        switch(true){
-            case $this->logic->flooding:
-                if($this->logic->drowning){
-                    $this->end = $this->setEndString('<br>... And then died.');
-                    return 'Drowning........';
-                }
-                return 'Assessing water damage....';
-            case $this->logic->cried:
-                if($this->logic->sweaty){
-                    return $this->logic->clogged ? 'Swearing....' : 'Sobbing.....';
-                }
-                return 'Crying again.....';
-            default:
-                return $this->logic->sweaty && $this->logic->clogged ? 'Removing splinters.......' : 'Cleaning up......';
-        }
+        $words = match(true){
+
+            $this->logic->drowning => 'Drowning........' && $this->end = $this->setEndString('<br>... And then died.'),
+            $this->logic->verywet => 'Assessing water damage....',
+            $this->logic->sweatycry => $this->logic->clogged ? 'Swearing....' : 'Sobbing.....',
+            $this->logic->cried => 'Crying again.....',
+            default => $this->logic->sweatyclog ? 'Removing splinters.......' : 'Cleaning up......',
+
+        };
+
+        return $words;
 
     }
 
     private function milestone6(): string {
 
-        switch(true){
-            case $this->logic->drowning:
-                if($this->logic->screamed){
-                    $this->end = $this->setEndString('<br>... And your neighbors want you to move.');
-                    return 'Police broke in, no longer drowning.......';
-                }
-                return '.... No longer drowning.';
-            default:
-                return 'Experiencing dietary remorse......';
-        }
+        $words = match(true){
+
+            $this->logic->wetloud => 'Police broke in, no longer drowning.......' && $this->end = $this->setEndString('<br>... And your neighbors want you to move.'),
+            $this->logic->drowning => '.... No longer drowning.',
+            default => 'Experiencing dietary remorse......',
+
+        };
+
+        return $words;
 
     }
 
     private function milestone7(): string {
 
-        switch(true){
-            case $this->logic->drowning:
-                return $this->logic->screamed ? 'Being fined for screaming earlier.....' : '........';
-            default:
-                return ($this->logic->clogged || $this->logic->flooding) ? 'Calling a plumber.....' : 'Reconsidering dairy......';
-        }
+        $words = match(true){
+
+            $this->logic->drowning => $this->logic->screamed ? 'Being fined for screaming earlier.....' : '........',
+            $this->logic->clogged, 
+            $this->logic->flooding => 'Calling a plumber.....',
+            default => 'Reconsidering dairy......',
+
+        };
+
+        return $words;
         
     }
 
     private function prepString(string $string): string {
         
-        return '<li class="poop-message"><p>'. $string .'</p></li>'."\n";
+        $finished = ($string !== '') ? "<li class=\"poop-message\"><p>{$string}</p></li>\n" : '';
+
+        return $finished;
         
     }
 
@@ -220,12 +149,42 @@ class PoopStart {
 
     }
 
-    private function setEndString(string $end){
+    private function setEndString(string $end): string {
 
         $s = $this->logic->poops === 1 ? '' : 's';
         $formatted = \number_format($this->logic->poops);
 
         return "<div class=\"final\"><p>You Pooped: {$formatted} Time{$s}! {$end}<br><button id=\"poop-again\">Poop Again?</button></p></div>";
+
+    }
+
+    private function preparePoopArr(): void {
+
+        $pooparr[] = '<div class="poop-start"><p>Pooping...</p></div>'."\n";
+
+        for($i = 0; $i < $this->logic->poops; $i++){
+            if($i < 25 || ($i % 25) === 0){
+                $pooparr[] = match(true){
+                    $i === 0,
+                    $i === 90000 =>  '<li>poop</li>'."\n",
+                    ($i % 10000) === 0 => $this->prepString($this->event[$i]),
+                    default => '<li>poop</li>'."\n",
+                };
+            }
+        }
+
+        $this->finishPoopArr($pooparr);
+
+    }
+
+    private function finishPoopArr(array $pooparr): void {
+
+        $pooparr[] = $this->end;
+        $pooparr = \array_values(
+            \array_filter($pooparr)
+        );
+
+        echo \json_encode($pooparr);
 
     }
 

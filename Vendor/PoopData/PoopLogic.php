@@ -4,14 +4,18 @@ namespace PoopData;
 
 class PoopLogic {
 
-            public bool $clogged;
-            public bool $flooding;
-            public bool $drowning;
-            public bool $screamed;
-            public bool $sweaty;
-            public bool $cried;
-            public int $poops;
-            public array $milestones = [];
+            public readonly bool $clogged;
+            public readonly bool $flooding;
+            public readonly bool $drowning;
+            public readonly bool $screamed;
+            public readonly bool $sweaty;
+            public readonly bool $cried;
+            public readonly bool $sweatycry;
+            public readonly bool $sweatyclog;
+            public readonly bool $verywet;
+            public readonly bool $wetloud;
+            public readonly int $poops;
+            public array $milestones;
 
         public function __construct(){
 
@@ -20,34 +24,44 @@ class PoopLogic {
 
         }
 
-    private function setPoopPhase1() {
+    private function setPoopPhase1(): void {
 
         $this->screamed = self::rollForTrue();
         $this->sweaty = !$this->screamed ? self::rollForTrue() : false;
 
     }
 
-    private function setPoopPhase2() {
+    private function setPoopPhase2(): void {
 
         $this->cried = self::rollForTrue();
 
     }
 
-    private function setPoopPhase3() {
+    private function setPoopPhase3(): void {
 
         $this->clogged = self::rollForTrue();
 
     }
 
-    private function setPoopPhase4(){
+    private function setPoopPhase4(): void {
 
         $this->flooding = $this->clogged ? self::rollForTrue() : false;
 
     }
 
-    private function setPoopPhase5(){
+    private function setPoopPhase5(): void {
 
         $this->drowning = $this->flooding ? self::rollForTrue() : false;
+        $this->setCombos();
+
+    }
+
+    private function setCombos(): void {
+
+        $this->verywet = $this->flooding && !$this->drowning;
+        $this->sweatycry = $this->cried && $this->sweaty;
+        $this->sweatyclog = $this->sweaty && $this->clogged;
+        $this->wetloud = $this->drowning && $this->screamed;
 
     }
 
@@ -59,26 +73,33 @@ class PoopLogic {
 
     }
 
-    private function setPoopAmount(){
+    private function setPoopAmount(): void {
 
         $this->poops = \mt_rand(1, 90000);
         
-        for($i = 1; $i <= 5; $i++){
-            $function = "setPoopPhase{$i}";
-            $this->{$function}();
-        }
-        
     }
 
-    private function setMilestones(){
+    private function setMilestones(): void {
 
         $poops = 10000;
+        $i = 1;
 
         while($this->poops >= $poops){
-            $this->milestones[] = $poops;
-            $poops += 10000;
+            $this->preparePoopEvents($poops, $i);
         };
 
+    }
+
+    private function preparePoopEvents(int &$poops, int &$i): void {
+
+        if($i <= 5){
+            $function = "setPoopPhase{$i}";
+            $this->{$function}();
+            $i++;
+        }
+        
+        $this->milestones[] = $poops;
+        $poops += 10000;
 
     }
 

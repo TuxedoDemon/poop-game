@@ -73,9 +73,11 @@ class PoopStart {
 
             !$this->logic->clogged => 'Flushing a third time...',
             !$this->logic->flooding => $this->logic->sweaty ? 'Plunger slipped and broke.....' : 'Flushing <em>again....</em>',
-            $this->logic->flooding => 'Flooding.......' && $this->end = $this->setEndString('<br>... And lost your security deposit.'),
+            $this->logic->flooding => 'Flooding.......',
 
         };
+
+        $this->logic->flooding && $this->end = $this->setEndString('<br>... And lost your security deposit.');
 
         return $words;
 
@@ -85,13 +87,15 @@ class PoopStart {
 
         $words = match(true){
 
-            $this->logic->drowning => 'Drowning........' && $this->end = $this->setEndString('<br>... And then died.'),
+            $this->logic->drowning => 'Drowning........',
             $this->logic->verywet => 'Assessing water damage....',
             $this->logic->sweatycry => $this->logic->clogged ? 'Swearing....' : 'Sobbing.....',
             $this->logic->cried => 'Crying again.....',
             default => $this->logic->sweatyclog ? 'Removing splinters.......' : 'Cleaning up......',
 
         };
+
+        $this->logic->drowning && $this->end = $this->setEndString('<br>... And then died.');
 
         return $words;
 
@@ -101,11 +105,13 @@ class PoopStart {
 
         $words = match(true){
 
-            $this->logic->wetloud => 'Police broke in, no longer drowning.......' && $this->end = $this->setEndString('<br>... And your neighbors want you to move.'),
+            $this->logic->wetloud => 'Police broke in, no longer drowning.......',
             $this->logic->drowning => '.... No longer drowning.',
             default => 'Experiencing dietary remorse......',
 
         };
+
+        $this->logic->wetloud && $this->end = $this->setEndString('<br>... And your neighbors want you to move.');
 
         return $words;
 

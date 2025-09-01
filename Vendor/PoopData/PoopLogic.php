@@ -51,7 +51,7 @@ class PoopLogic {
 
     }
 
-    public function rollForTrue(): bool {
+    private static function rollForTrue(): bool {
 
         $bool = \mt_rand(0, 1) === 1;
 

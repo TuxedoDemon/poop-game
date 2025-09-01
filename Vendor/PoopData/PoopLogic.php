@@ -15,7 +15,7 @@ class PoopLogic {
             public readonly bool $verywet;
             public readonly bool $wetloud;
             public readonly int $poops;
-            public array $milestones;
+            public array $milestones = [];
 
         public function __construct(){
 

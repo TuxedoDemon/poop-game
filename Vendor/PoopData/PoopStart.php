@@ -178,7 +178,7 @@ class PoopStart {
         switch(true){
             case $this->logic->drowning:
                 if($this->logic->screamed){
-                    $this->setEndString('<br>... And your neighbors want you to move.');
+                    $this->end = $this->setEndString('<br>... And your neighbors want you to move.');
                     return 'Police broke in, no longer drowning.......';
                 }
                 return '.... No longer drowning.';

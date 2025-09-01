@@ -1,4 +1,6 @@
 <?php
+// ORIGINAL VERSION OF WHATEVER THIS IS WRITTEN IN APRIL 2025
+
 header('Allow: POST, HEAD');
 header('Cross-Origin-Resource-Policy: same-origin');
 header('Content-Type: application/json');
